@@ -1,0 +1,22 @@
+<idea-plugin>
+    <id>cn.mrdear.setter.SetterHelper</id>
+    <name>SetterHepler</name>
+    <vendor email="niudear@foxmail.com" url="https://mrdear.cn">屈定</vendor>
+
+    <description><![CDATA[
+        help to generate POJO convert code </br>
+        support this, builder TODO
+    ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
