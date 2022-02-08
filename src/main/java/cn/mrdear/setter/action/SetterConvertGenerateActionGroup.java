@@ -28,6 +28,8 @@ import cn.mrdear.setter.model.OutputConvertResult;
 import cn.mrdear.setter.utils.LogUtils;
 import cn.mrdear.setter.utils.PsiMyUtils;
 
+import java.util.Objects;
+
 /**
  * 目前是所有转换的入口处,程序自动判断当前所处于的环境,选择最优方式生成
  * @author quding
@@ -58,7 +60,7 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
                 return;
             }
             // 定义转换依赖的上下问信息
-            InputConvertContext context = new InputConvertContext(project);
+            InputConvertContext context = new InputConvertContext(project, element, psiParent);
 
             Mode mode = Mode.NULL;
 
@@ -75,11 +77,19 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
 
             // 父元素为PsiMethod,当前元素不为PsiLocalVariable,表名在方法体内部,且未指定了变量
             if (psiParent instanceof PsiMethod) {
+                PsiMethod psiMethod = (PsiMethod)psiParent;
+
                 mode = Mode.METHOD; // 更改为方法处理模式
-                PsiType returnType = ((PsiMethod)psiParent).getReturnType();
+                PsiType returnType = psiMethod.getReturnType();
                 context.setReturnType(returnType); // 获取返回类型
 
-                PsiParameterList list = ((PsiMethod)psiParent).getParameterList();
+                // 如果上述没获取成功,说明是构造函数,无返回值
+                if (null == returnType && psiMethod.isConstructor()) {
+                    returnType = PsiTypesUtil.getClassType(Objects.requireNonNull(psiMethod.getContainingClass()));
+                    context.setReturnType("this", returnType);
+                }
+
+                PsiParameterList list = psiMethod.getParameterList();
                 for (PsiParameter parameter : list.getParameters()) {
                     PsiType type = parameter.getType();
                     PsiClass parameterClass = PsiTypesUtil.getPsiClass(type);

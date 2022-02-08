@@ -22,7 +22,7 @@ import java.util.Set;
 public class PsiMyUtils {
 
     private static Set<String> IGNORE_METHOD = Set.of("clone","wait","object","equals",
-        "toString","notify","notifyAll","registerNatives","class","finalize","hashCode","canEqual");
+        "toString","notify","notifyAll","registerNatives","class","finalize","hashCode","canEqual","getClass");
 
     /**
      * 判断是否为有效方法

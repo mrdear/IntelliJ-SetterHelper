@@ -3,6 +3,7 @@ package cn.mrdear.setter.model;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -13,8 +14,11 @@ import com.intellij.psi.util.PsiTypesUtil;
 
 import lombok.Getter;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import cn.mrdear.setter.utils.PsiMyUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -66,16 +70,40 @@ public class SourceClassModel {
         }
     }
 
-    public void initAccessFiled(Project project) {
+    /**
+     * 判断当前是否是builder
+     */
+    public boolean isBuilder() {
+        return this.psiClass.hasAnnotation("lombok.Builder");
+    }
+
+    /**
+     * 判断当前是否是this
+     */
+    public boolean isThis() {
+        return this.varName.equals("this");
+    }
+
+    public void initAccessFiled(Project project, PsiElement psiCurrent) {
         if (null == this.psiClass) {
             return;
         }
-        //PsiResolveHelper resolveHelper = JavaPsiFacade.getInstance(project).getResolveHelper();
+
+        PsiResolveHelper resolveHelper = JavaPsiFacade.getInstance(project).getResolveHelper();
         PsiMethod[] methods = this.psiClass.getAllMethods();
+
+        // 判断是否为lombok builder模式
+        if (isBuilder()) {
+            PsiClass innerClassByName = this.psiClass.findInnerClassByName(this.psiClass.getName() + "Builder", false);
+            if (null != innerClassByName) {
+                methods = ArrayUtils.addAll(methods, Arrays.stream(innerClassByName.getMethods()).filter(PsiMethod::hasParameters).toArray(PsiMethod[]::new));
+            }
+        }
 
         // 使用方法
         for (PsiMethod method : methods) {
-            if (!PsiMyUtils.isValidMethod(method)) {
+            if (!PsiMyUtils.isValidMethod(method)
+                || !resolveHelper.isAccessible(method, psiCurrent, this.psiClass)) {
                 continue;
             }
 
@@ -105,8 +133,13 @@ public class SourceClassModel {
                         this.varName + "." + methodName + "(%s)");
                 } else {
                     // var.xxx(%s)
-                    canAccessSetFiled.putIfAbsent(methodName.toUpperCase(),
-                        this.varName + "." + methodName + "(%s)");
+                    if (isBuilder()) {
+                        canAccessSetFiled.putIfAbsent(methodName.toUpperCase(),
+                            "." + methodName + "(%s)");
+                    } else {
+                        canAccessSetFiled.putIfAbsent(methodName.toUpperCase(),
+                            this.varName + "." + methodName + "(%s)");
+                    }
                 }
             }
         }
@@ -115,7 +148,8 @@ public class SourceClassModel {
         PsiField[] fields = this.psiClass.getAllFields();
         for (PsiField field : fields) {
             String name = field.getName();
-            if (PsiMyUtils.isValidField(field)) {
+            if (PsiMyUtils.isValidField(field)
+                && resolveHelper.isAccessible(field, psiCurrent, this.psiClass) ) {
                 canAccessSetFiled.putIfAbsent(name.toUpperCase(),
                     this.varName + "." + name +" = %s");
 

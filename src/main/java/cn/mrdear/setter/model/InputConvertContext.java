@@ -37,8 +37,10 @@ public class InputConvertContext {
     @Getter
     private SourceClassModel returnType;
 
-    public InputConvertContext(Project project) {
+    public InputConvertContext(Project project, PsiElement psiCurrent, PsiElement psiParent) {
         this.project = project;
+        this.psiCurrent = psiCurrent;
+        this.psiParent = psiParent;
     }
 
     public void setReturnType(PsiType returnType) {
@@ -47,12 +49,12 @@ public class InputConvertContext {
 
     public void setReturnType(String varName, PsiType returnType) {
         this.returnType = new SourceClassModel(varName, returnType);
-        this.returnType.initAccessFiled(project);
+        this.returnType.initAccessFiled(project, psiCurrent);
     }
 
     public void setSourceType(String varName, PsiType sourceType) {
         this.sourceType = new SourceClassModel(varName, sourceType);
-        this.sourceType.initAccessFiled(project);
+        this.sourceType.initAccessFiled(project, psiCurrent);
     }
 
     /**
