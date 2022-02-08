@@ -8,9 +8,12 @@
         support this, builder TODO
     ]]></description>
 
+    <change-notes>Initial release of the plugin.</change-notes>
+
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
@@ -18,5 +21,9 @@
 
     <actions>
         <!-- Add your actions here -->
+        <action id="SetterConvertGenerate" class="cn.mrdear.setter.action.SetterConvertGenerateActionGroup"
+                text="Setter Convert" description="POJO转换插件功能集">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
