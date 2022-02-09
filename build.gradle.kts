@@ -27,8 +27,10 @@ intellij {
     downloadSources.set(true)
 }
 
+
 tasks {
     patchPluginXml {
+        sinceBuild.set("211")
         changeNotes.set("""
             Add change notes here.<br>
             <em>most HTML tags may be used</em>        """.trimIndent())

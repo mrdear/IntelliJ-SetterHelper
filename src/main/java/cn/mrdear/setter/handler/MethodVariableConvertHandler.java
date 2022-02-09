@@ -1,5 +1,8 @@
 package cn.mrdear.setter.handler;
 
+import com.intellij.psi.PsiNewExpression;
+import com.intellij.psi.util.PsiTreeUtil;
+
 import cn.mrdear.setter.model.InputConvertContext;
 import cn.mrdear.setter.model.Mode;
 import cn.mrdear.setter.model.OutputConvertResult;
@@ -16,11 +19,11 @@ import java.util.Optional;
  * @author quding
  * @since 2022/2/7
  */
-public class MethodConvertHandler extends AbstractConvertHandler {
+public class MethodVariableConvertHandler extends AbstractConvertHandler {
 
     @Override
     public Mode support() {
-        return Mode.METHOD;
+        return Mode.METHOD_VARIABLE;
     }
 
     @Override
@@ -30,31 +33,30 @@ public class MethodConvertHandler extends AbstractConvertHandler {
         ReturnClassModel returnType = context.getReturnType();
         SourceClassModel sourceType = context.getSourceType();
 
-        boolean isThis = returnType.isThis();
         boolean isBuilder = returnType.isBuilder();
 
         // 添加首行new对象
         if (isBuilder) {
-            result.appendInsert(returnType.getPsiClass().getName()).append(" ").append(returnType.getVarName())
-                .append(" = ").append(returnType.getPsiClass().getName()).append(".builder()\n");
-        } else if (!isThis) {
-            result.appendInsert(returnType.getPsiClass().getName()).append(" ").append(returnType.getVarName())
-                .append(" = new ").append(returnType.getPsiClass().getName()).append("();");
+            result.appendInsert(" = ").append(returnType.getPsiClass().getName()).append(".builder()\n");
+        } else {
+            // 当自身没有初始化函数时,才给定初始化
+            if (null == PsiTreeUtil.getNextSiblingOfType(context.getPsiCurrent(), PsiNewExpression.class)) {
+                result.appendInsert(" = new ").append(returnType.getPsiClass().getName()).append("();");
+            }
         }
 
-        // 填充中间转换
+        // 添加set转换
         fillMainSetConvert(result, returnType, sourceType);
 
         // 添加return
         if (isBuilder) {
             result.appendInsert(".build();");
             result.appendInsert("return ").append(returnType.getVarName()).append(";");
-        } else if (!isThis) {
+        } else {
             result.appendInsert("return ").append(returnType.getVarName()).append(";");
         }
 
         return result;
     }
-
 
 }

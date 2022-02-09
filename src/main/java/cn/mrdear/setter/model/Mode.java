@@ -11,6 +11,10 @@ public enum Mode {
      */
     NULL,
     /**
+     * 方法内指定变量
+     */
+    METHOD_VARIABLE,
+    /**
      * 空方法体内转换
      */
     METHOD;

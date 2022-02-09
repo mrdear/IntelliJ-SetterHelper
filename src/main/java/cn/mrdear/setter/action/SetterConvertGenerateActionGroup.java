@@ -21,7 +21,9 @@ import com.intellij.psi.util.PsiTypesUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import cn.mrdear.setter.handler.ConvertHandler;
 import cn.mrdear.setter.handler.MethodConvertHandler;
+import cn.mrdear.setter.handler.MethodVariableConvertHandler;
 import cn.mrdear.setter.model.InputConvertContext;
 import cn.mrdear.setter.model.Mode;
 import cn.mrdear.setter.model.OutputConvertResult;
@@ -66,13 +68,19 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
 
             // 整个的生成基于当前光标所在元素以及父元素定位,分为三种情况
             // 父元素为PsiClass,无视当前元素,表名在方法体外部生成
-            if (psiParent instanceof PsiClass) {
-
-            }
+            //if (psiParent instanceof PsiClass) {
+            //
+            //}
 
             // 父元素为PsiLocalVariable,当前元素为任意输入,表名在方法体内部,且指定了变量
             if (psiParent instanceof PsiLocalVariable) {
+                mode = Mode.METHOD_VARIABLE;
+                PsiType returnType = ((PsiLocalVariable)psiParent).getType();
+                context.setReturnType(((PsiLocalVariable)psiParent).getName(), returnType);
 
+                PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiParent, PsiMethod.class);
+
+                findSourceTypeFromMethod(psiMethod, context);
             }
 
             // 父元素为PsiMethod,当前元素不为PsiLocalVariable,表名在方法体内部,且未指定了变量
@@ -89,17 +97,7 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
                     context.setReturnType("this", returnType);
                 }
 
-                PsiParameterList list = psiMethod.getParameterList();
-                for (PsiParameter parameter : list.getParameters()) {
-                    PsiType type = parameter.getType();
-                    PsiClass parameterClass = PsiTypesUtil.getPsiClass(type);
-                    // 过滤Java自带的属性类
-                    if (PsiMyUtils.isJavaClass(parameterClass)) {
-                        continue;
-                    }
-                    context.setSourceType(parameter.getName(), type); // 设置为第一个不属于Java自带的类
-                    break;
-                }
+                findSourceTypeFromMethod(psiMethod, context);
             }
 
             // 开始转换
@@ -108,10 +106,13 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
                 return;
             }
 
-            MethodConvertHandler handler = null;
+            ConvertHandler handler = null;
             switch (mode) {
                 case METHOD:
                     handler = new MethodConvertHandler();
+                    break;
+                case METHOD_VARIABLE:
+                    handler = new MethodVariableConvertHandler();
                     break;
                 default:
                     return;
@@ -125,6 +126,24 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
         };
     }
 
+    /**
+     * 从方法中找到输入类型
+     * @param psiMethod 给定方法
+     * @param context 输入上下文
+     */
+    private void findSourceTypeFromMethod(PsiMethod psiMethod, InputConvertContext context) {
+        PsiParameterList list = psiMethod.getParameterList();
+        for (PsiParameter parameter : list.getParameters()) {
+            PsiType type = parameter.getType();
+            PsiClass parameterClass = PsiTypesUtil.getPsiClass(type);
+            // 过滤Java自带的属性类
+            if (PsiMyUtils.isJavaClass(parameterClass)) {
+                continue;
+            }
+            context.setSourceType(parameter.getName(), type); // 设置为第一个不属于Java自带的类
+            break;
+        }
+    }
 
     /**
      * 写入文档

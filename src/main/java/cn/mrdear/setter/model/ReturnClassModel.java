@@ -6,7 +6,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameterList;
 import com.intellij.psi.PsiResolveHelper;
 import com.intellij.psi.PsiType;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import cn.mrdear.setter.utils.PsiMyUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,7 +28,7 @@ import java.util.Map;
  * @author quding
  * @since 2022/2/7
  */
-public class SourceClassModel {
+public class ReturnClassModel {
     /**
      * 变量名
      */
@@ -46,14 +44,14 @@ public class SourceClassModel {
     @Getter
     private PsiClass psiClass;
     /**
-     * 获取可以访问的字段对象
+     * 获取可以设置值的字段
      * key字段名,用于匹配
-     * value对应拼接值,可能是this.xxx,也可能是var.getxxx(), var.xxx()
+     * value可能是 this.xxx = %s, 可能是var.setxxx(%s), var.xxx(%s)
      */
     @Getter
-    private Map<String, String> canAccessGetFiled = new HashMap<>();
+    private Map<String, String> canAccessSetFiled = new LinkedHashMap<>();
 
-    public SourceClassModel(String varName, PsiType type) {
+    public ReturnClassModel(String varName, PsiType type) {
         this.type = type;
         this.psiClass = PsiTypesUtil.getPsiClass(type);
         this.varName = varName;
@@ -61,6 +59,20 @@ public class SourceClassModel {
         if (null == this.varName && null != this.psiClass) {
             this.varName = PsiMyUtils.generateVarName(this.psiClass);
         }
+    }
+
+    /**
+     * 判断当前是否是builder
+     */
+    public boolean isBuilder() {
+        return this.psiClass.hasAnnotation("lombok.Builder");
+    }
+
+    /**
+     * 判断当前是否是this
+     */
+    public boolean isThis() {
+        return this.varName.equals("this");
     }
 
     public void initAccessFiled(Project project, PsiElement psiCurrent) {
@@ -71,6 +83,14 @@ public class SourceClassModel {
         PsiResolveHelper resolveHelper = JavaPsiFacade.getInstance(project).getResolveHelper();
         PsiMethod[] methods = this.psiClass.getAllMethods();
 
+        // 判断是否为lombok builder模式,追加builder对应class的set方法
+        if (isBuilder()) {
+            PsiClass innerClassByName = this.psiClass.findInnerClassByName(this.psiClass.getName() + "Builder", false);
+            if (null != innerClassByName) {
+                methods = ArrayUtils.addAll(methods, Arrays.stream(innerClassByName.getMethods()).filter(PsiMethod::hasParameters).toArray(PsiMethod[]::new));
+            }
+        }
+
         // 使用方法
         for (PsiMethod method : methods) {
             if (!PsiMyUtils.isValidMethod(method)
@@ -80,20 +100,20 @@ public class SourceClassModel {
 
             String methodName = method.getName();
             PsiParameterList methodParameter = method.getParameterList();
-            // 优先找get
-            if (methodParameter.isEmpty()) {
-                int getIndex = methodName.indexOf("get");
-                if (getIndex == 0) {
-                    // var.getxxx() 形式
-                    canAccessGetFiled.putIfAbsent(methodName.substring(3).toUpperCase(),
-                        this.varName + "." + methodName + "()");
-                } else {
-                    // var.xxx() 形式
-                    canAccessGetFiled.putIfAbsent(methodName.toUpperCase(),
-                        this.varName + "." + methodName + "()");
+
+            if (methodParameter.getParameters().length == 1) {
+                // 找Set
+                int setIndex = methodName.indexOf("set");
+                if (setIndex == 0) {
+                    // var.setxxx(%s)
+                    canAccessSetFiled.putIfAbsent(methodName.substring(3).toUpperCase(),
+                        this.varName + "." + methodName + "(%s)");
+                } else if (isBuilder()) {
+                    // var.xxx(%s)
+                    canAccessSetFiled.putIfAbsent(methodName.toUpperCase(),
+                        "." + methodName + "(%s)");
                 }
             }
-
         }
 
         // 使用this字段
@@ -102,9 +122,8 @@ public class SourceClassModel {
             String name = field.getName();
             if (PsiMyUtils.isValidField(field)
                 && resolveHelper.isAccessible(field, psiCurrent, this.psiClass) ) {
-
-                canAccessGetFiled.putIfAbsent(name.toUpperCase(),
-                    this.varName + "." + name);
+                canAccessSetFiled.putIfAbsent(name.toUpperCase(),
+                    this.varName + "." + name +" = %s");
             }
         }
 

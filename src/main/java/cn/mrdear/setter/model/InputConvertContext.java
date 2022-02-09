@@ -35,7 +35,7 @@ public class InputConvertContext {
      * 目标类型
      */
     @Getter
-    private SourceClassModel returnType;
+    private ReturnClassModel returnType;
 
     public InputConvertContext(Project project, PsiElement psiCurrent, PsiElement psiParent) {
         this.project = project;
@@ -48,7 +48,7 @@ public class InputConvertContext {
     }
 
     public void setReturnType(String varName, PsiType returnType) {
-        this.returnType = new SourceClassModel(varName, returnType);
+        this.returnType = new ReturnClassModel(varName, returnType);
         this.returnType.initAccessFiled(project, psiCurrent);
     }
 
