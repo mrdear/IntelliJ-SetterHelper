@@ -16,7 +16,7 @@ public abstract class AbstractConvertHandler implements ConvertHandler {
 
     protected void fillMainSetConvert(OutputConvertResult result, ReturnClassModel returnType, SourceClassModel sourceType) {
         // 添加set转换
-        boolean isBuilder = returnType.isBuilder();
+        boolean isBuilder = returnType.canBuilder();
         Map<String, String> getFiledMap = Optional.ofNullable(sourceType).map(SourceClassModel::getCanAccessGetFiled).orElse(Collections.emptyMap());
 
         returnType.getCanAccessSetFiled().forEach((k, v) -> {

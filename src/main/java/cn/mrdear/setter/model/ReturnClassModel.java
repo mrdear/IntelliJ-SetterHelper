@@ -18,7 +18,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import cn.mrdear.setter.utils.PsiMyUtils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,9 +62,12 @@ public class ReturnClassModel {
     }
 
     /**
-     * 判断当前是否是builder
+     * 判断当前是否可以采用builder模式
      */
-    public boolean isBuilder() {
+    public boolean canBuilder() {
+        if (this.varName.equalsIgnoreCase("this")) {
+            return false;
+        }
         return this.psiClass.hasAnnotation("lombok.Builder");
     }
 
@@ -85,7 +87,7 @@ public class ReturnClassModel {
         PsiMethod[] methods = this.psiClass.getAllMethods();
 
         // 判断是否为lombok builder模式,追加builder对应class的set方法
-        if (isBuilder()) {
+        if (canBuilder()) {
             PsiClass innerClassByName = this.psiClass.findInnerClassByName(this.psiClass.getName() + "Builder", false);
             if (null != innerClassByName) {
                 methods = ArrayUtils.addAll(methods, Arrays.stream(innerClassByName.getMethods()).filter(PsiMethod::hasParameters).toArray(PsiMethod[]::new));
@@ -109,7 +111,7 @@ public class ReturnClassModel {
                     // var.setxxx(%s)
                     canAccessSetFiled.putIfAbsent(methodName.substring(3).toUpperCase(),
                         this.varName + "." + methodName + "(%s)");
-                } else if (isBuilder()) {
+                } else if (canBuilder()) {
                     // var.xxx(%s)
                     canAccessSetFiled.putIfAbsent(methodName.toUpperCase(),
                         "." + methodName + "(%s)");

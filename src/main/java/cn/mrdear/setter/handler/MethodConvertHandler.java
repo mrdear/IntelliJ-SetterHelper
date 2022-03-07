@@ -6,10 +6,6 @@ import cn.mrdear.setter.model.OutputConvertResult;
 import cn.mrdear.setter.model.ReturnClassModel;
 import cn.mrdear.setter.model.SourceClassModel;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * 处理方法内生成
  *
@@ -31,7 +27,7 @@ public class MethodConvertHandler extends AbstractConvertHandler {
         SourceClassModel sourceType = context.getSourceType();
 
         boolean isThis = returnType.isThis();
-        boolean isBuilder = returnType.isBuilder();
+        boolean isBuilder = returnType.canBuilder();
 
         // 添加首行new对象
         if (isBuilder) {

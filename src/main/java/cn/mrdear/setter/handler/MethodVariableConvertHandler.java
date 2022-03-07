@@ -11,10 +11,7 @@ import cn.mrdear.setter.model.ReturnClassModel;
 import cn.mrdear.setter.model.SetterDataKeys;
 import cn.mrdear.setter.model.SourceClassModel;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 处理方法内生成
@@ -36,7 +33,7 @@ public class MethodVariableConvertHandler extends AbstractConvertHandler {
         ReturnClassModel returnType = context.getReturnType();
         SourceClassModel sourceType = context.getSourceType();
 
-        boolean isBuilder = returnType.isBuilder();
+        boolean isBuilder = returnType.canBuilder();
 
         // 添加首行new对象
         if (isBuilder) {
