@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.mrdear.setter"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.3-SNAPSHOT"
 
 repositories {
     mavenLocal()

@@ -27,6 +27,7 @@ import cn.mrdear.setter.handler.MethodVariableConvertHandler;
 import cn.mrdear.setter.model.InputConvertContext;
 import cn.mrdear.setter.model.Mode;
 import cn.mrdear.setter.model.OutputConvertResult;
+import cn.mrdear.setter.model.SetterDataKeys;
 import cn.mrdear.setter.utils.LogUtils;
 import cn.mrdear.setter.utils.PsiMyUtils;
 
@@ -79,6 +80,7 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
                 context.setReturnType(((PsiLocalVariable)psiParent).getName(), returnType);
 
                 PsiMethod psiMethod = PsiTreeUtil.getParentOfType(psiParent, PsiMethod.class);
+                context.putData(SetterDataKeys.CURRENT_METHOD, psiMethod);
 
                 findSourceTypeFromMethod(psiMethod, context);
             }
@@ -90,6 +92,7 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
                 mode = Mode.METHOD; // 更改为方法处理模式
                 PsiType returnType = psiMethod.getReturnType();
                 context.setReturnType(returnType); // 获取返回类型
+                context.putData(SetterDataKeys.CURRENT_METHOD, psiMethod);
 
                 // 如果上述没获取成功,说明是构造函数,无返回值
                 if (null == returnType && psiMethod.isConstructor()) {

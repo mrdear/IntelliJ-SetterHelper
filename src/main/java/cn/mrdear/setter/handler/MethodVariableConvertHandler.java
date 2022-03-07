@@ -1,5 +1,6 @@
 package cn.mrdear.setter.handler;
 
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiNewExpression;
 import com.intellij.psi.util.PsiTreeUtil;
 
@@ -7,10 +8,12 @@ import cn.mrdear.setter.model.InputConvertContext;
 import cn.mrdear.setter.model.Mode;
 import cn.mrdear.setter.model.OutputConvertResult;
 import cn.mrdear.setter.model.ReturnClassModel;
+import cn.mrdear.setter.model.SetterDataKeys;
 import cn.mrdear.setter.model.SourceClassModel;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -48,11 +51,13 @@ public class MethodVariableConvertHandler extends AbstractConvertHandler {
         // 添加set转换
         fillMainSetConvert(result, returnType, sourceType);
 
-        // 添加return
+        // builder判断
         if (isBuilder) {
             result.appendInsert(".build();");
-            result.appendInsert("return ").append(returnType.getVarName()).append(";");
-        } else {
+        }
+        // return 判断,只有返回类型与当前判断一致,才添加return
+        PsiMethod psiMethod = SetterDataKeys.CURRENT_METHOD.getData(context);
+        if (Objects.equals(psiMethod.getReturnType(), returnType.getType())) {
             result.appendInsert("return ").append(returnType.getVarName()).append(";");
         }
 

@@ -37,6 +37,7 @@ public class ReturnClassModel {
     /**
      * 包装的类型
      */
+    @Getter
     private PsiType type;
     /**
      * 对应的class信息
