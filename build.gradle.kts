@@ -32,10 +32,9 @@ tasks {
     patchPluginXml {
         // 21代表年,后面的代表季度
         sinceBuild.set("211")
-        untilBuild.set("214")
         changeNotes.set("""
-            Add change notes here.<br>
-            <em>most HTML tags may be used</em>        """.trimIndent())
+            init plugin version .<br>
+            <em>most example in https://github.com/mrdear/SetterHelperExample </em>        """.trimIndent())
     }
 }
 

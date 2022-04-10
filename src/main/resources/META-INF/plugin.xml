@@ -4,8 +4,9 @@
     <vendor email="niudear@foxmail.com" url="https://mrdear.cn">屈定</vendor>
 
     <description><![CDATA[
-        help to generate POJO convert code </br>
-        support this, builder TODO
+        The function of this plugin is to automatically map and copy the same fields of the two objects in Java and other languages, which can be compared to the role of mapstruct in Java. <br/>
+        this plugin use support get and set ,lombok builder and this.xxx = dto.getxxx(). <br/>
+        more example: <a href="https://github.com/mrdear/SetterHelperExample">https://github.com/mrdear/SetterHelperExample</a>
     ]]></description>
 
     <change-notes>Initial release of the plugin.</change-notes>
