@@ -22,7 +22,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     // 修改为本地安装目录
-    localPath.set("/Users/quding/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/213.6777.52/IntelliJ IDEA.app")
+    version.set("2021.2.4")
     plugins.addAll("lombok","java")
     downloadSources.set(true)
 }
@@ -32,6 +32,7 @@ tasks {
     patchPluginXml {
         // 21代表年,后面的代表季度
         sinceBuild.set("211")
+        untilBuild.set("221.*")
         changeNotes.set("""
             init plugin version .<br>
             <em>most example in https://github.com/mrdear/SetterHelperExample </em>        """.trimIndent())
