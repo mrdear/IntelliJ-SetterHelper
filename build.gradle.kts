@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.mrdear.setter"
-version = "0.0.4"
+version = "0.1.0"
 
 repositories {
     mavenLocal()
@@ -22,8 +22,8 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     // 修改为本地安装目录
-    version.set("2021.2.4")
-    plugins.addAll("lombok","java")
+    version.set("2021.2")
+    plugins.addAll("lombok","java","Kotlin")
     downloadSources.set(true)
 }
 
@@ -31,7 +31,7 @@ intellij {
 tasks {
     patchPluginXml {
         // 21代表年,后面的代表季度
-        sinceBuild.set("211")
+        sinceBuild.set("212")
         untilBuild.set("221.*")
         changeNotes.set("""
             init plugin version .<br>

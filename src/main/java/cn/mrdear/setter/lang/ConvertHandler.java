@@ -1,7 +1,6 @@
-package cn.mrdear.setter.handler;
+package cn.mrdear.setter.lang;
 
 import cn.mrdear.setter.model.InputConvertContext;
-import cn.mrdear.setter.model.Mode;
 import cn.mrdear.setter.model.OutputConvertResult;
 
 /**
@@ -11,10 +10,6 @@ import cn.mrdear.setter.model.OutputConvertResult;
  */
 public interface ConvertHandler {
 
-    /**
-     * 当前支持的模式
-     */
-    Mode support();
 
     /**
      * 处理转换逻辑

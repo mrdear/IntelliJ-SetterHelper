@@ -8,6 +8,10 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.util.PsiTypesUtil;
+
+import de.plushnikov.intellij.plugin.util.PsiClassUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -72,10 +76,11 @@ public class PsiMyUtils {
 
     /**
      * 根据class获取局部变量命名
-     * @param psiClass 类型
+     * @param psiType 类型
      * @return 命名字段
      */
-    public static String generateVarName(PsiClass psiClass) {
+    public static String generateVarName(PsiType psiType) {
+        PsiClass psiClass = PsiTypesUtil.getPsiClass(psiType);
         if (null == psiClass) {
             return "temp";
         }

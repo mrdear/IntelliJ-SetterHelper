@@ -4,11 +4,9 @@ import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiFile;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +28,7 @@ public class InputConvertContext implements DataProvider {
     /**
      * 当前项目
      */
+    @Getter
     private Project project;
     /**
      * 当前光标所在对象
@@ -41,43 +40,15 @@ public class InputConvertContext implements DataProvider {
      */
     @Getter
     private PsiElement psiParent;
-    /**
-     * 原始类型
-     */
-    @Getter
-    private SourceClassModel sourceType;
-    /**
-     * 目标类型
-     */
-    @Getter
-    private ReturnClassModel returnType;
 
-    public InputConvertContext(Project project, PsiElement psiCurrent, PsiElement psiParent) {
+    @Getter
+    private PsiFile psiFile;
+
+    public InputConvertContext(Project project, PsiFile psiFile, PsiElement psiCurrent, PsiElement psiParent) {
         this.project = project;
+        this.psiFile = psiFile;
         this.psiCurrent = psiCurrent;
         this.psiParent = psiParent;
-    }
-
-    public void setReturnType(PsiType returnType) {
-        setReturnType(null, returnType);
-    }
-
-    public void setReturnType(String varName, PsiType returnType) {
-        this.returnType = new ReturnClassModel(varName, returnType);
-        this.returnType.initAccessFiled(project, psiCurrent);
-    }
-
-    public void setSourceType(String varName, PsiType sourceType) {
-        this.sourceType = new SourceClassModel(varName, sourceType);
-        this.sourceType.initAccessFiled(project, psiCurrent);
-    }
-
-    /**
-     * 判断当前转换是否可进行
-     * @return true 可进行
-     */
-    public boolean canConvert() {
-        return true;
     }
 
     @Override
