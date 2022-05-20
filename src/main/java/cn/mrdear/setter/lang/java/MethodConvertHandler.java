@@ -49,14 +49,21 @@ class MethodConvertHandler implements ConvertHandler {
         returnType.getCanAccessSetFiled().forEach((k, v) -> {
             List<Pair<PsiClass, String>> pairs = sourceMap.get(k);
             if (null != pairs) {
+                boolean isMatch = false;
+
                 for (Pair<PsiClass, String> pair : pairs) {
                     if (pair.getFirst().isEquivalentTo(v.getFirst())) {
                         result.appendInsert(String.format(v.second, pair.second));
                         if (!isBuilder) {
                             result.appendInsert(";");
                         }
+                        isMatch = true;
                         break;
                     }
+                }
+                // 如果上述没匹配，则填充默认
+                if (!isMatch) {
+                    result.appendInsert(String.format(v.second, "")).append(";");
                 }
             } else {
                 result.appendInsert(String.format(v.second, "")).append(";");

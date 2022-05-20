@@ -52,14 +52,20 @@ public class MethodVariableConvertHandler implements ConvertHandler {
             List<Pair<PsiClass, String>> pairs = sourceMap.get(k);
 
             if (null != pairs) {
+                boolean isMatch = false;
                 for (Pair<PsiClass, String> pair : pairs) {
                     if (pair.getFirst().isEquivalentTo(v.getFirst())) {
                         result.appendInsert(String.format(v.second, pair.second));
                         if (!isBuilder) {
                             result.appendInsert(";");
                         }
+                        isMatch = true;
                         break;
                     }
+                }
+
+                if (!isMatch) {
+                    result.appendInsert(String.format(v.second, "")).append(";");
                 }
             } else {
                 result.appendInsert(String.format(v.second, "")).append(";");
