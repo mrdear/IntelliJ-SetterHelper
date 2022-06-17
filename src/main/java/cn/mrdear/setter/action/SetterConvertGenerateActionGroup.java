@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import cn.mrdear.setter.lang.LanguageConvertService;
 import cn.mrdear.setter.model.InputConvertContext;
 import cn.mrdear.setter.model.OutputConvertResult;
+import cn.mrdear.setter.model.SetterHelperException;
 import cn.mrdear.setter.utils.LogUtils;
 import cn.mrdear.setter.utils.PsiMyUtils;
 
@@ -60,29 +61,38 @@ public class SetterConvertGenerateActionGroup extends CodeInsightAction {
                 return;
             }
 
-            // 定义转换依赖的上下文信息
-            InputConvertContext context = new InputConvertContext(project, psiFile, element, psiParent);
+            try {
+                // 定义转换依赖的上下文信息
+                InputConvertContext context = new InputConvertContext(project, psiFile, element, psiParent);
 
-            // 执行转换
-            LanguageConvertService languageConvertService = project.getService(LanguageConvertService.class);
-            OutputConvertResult result = languageConvertService.handlerConvert(context);
+                // 执行转换
+                LanguageConvertService languageConvertService = project.getService(LanguageConvertService.class);
+                OutputConvertResult result = languageConvertService.handlerConvert(context);
 
-            // 结果写回
-            int curLine = editor.getCaretModel().getLogicalPosition().line;
-            PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-            Document document = psiDocumentManager.getDocument(psiFile);
-            if (null == document) {
-                throw new RuntimeException("can't find document");
+                // 结果写回
+                int curLine = editor.getCaretModel().getLogicalPosition().line;
+                PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+                Document document = psiDocumentManager.getDocument(psiFile);
+                if (null == document) {
+                    throw new RuntimeException("can't find document");
+                }
+                int lineEndOffset = document.getLineEndOffset(curLine);
+                document.insertString(lineEndOffset, result.getInsertText());
+
+                psiDocumentManager.doPostponedOperationsAndUnblockDocument(document);
+                psiDocumentManager.commitDocument(document);
+
+                // 格式化代码块
+                CodeStyleManager.getInstance(project)
+                    .reformatRange(psiFile, lineEndOffset, lineEndOffset + result.getInsertText().length());
+            } catch (Exception e) {
+                String message = "No element found for setter helper";
+                if (e instanceof SetterHelperException) {
+                    message = e.getMessage();
+                }
+                JBPopupFactory.getInstance().createMessage(message)
+                    .showInBestPositionFor(editor);
             }
-            int lineEndOffset = document.getLineEndOffset(curLine);
-            document.insertString(lineEndOffset, result.getInsertText());
-
-            psiDocumentManager.doPostponedOperationsAndUnblockDocument(document);
-            psiDocumentManager.commitDocument(document);
-
-            // 格式化代码块
-            CodeStyleManager.getInstance(project)
-                .reformatRange(psiFile, lineEndOffset, lineEndOffset + result.getInsertText().length());
         };
     }
 

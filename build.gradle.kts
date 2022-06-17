@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.mrdear.setter"
-version = "0.1.1"
+version = "0.1.2"
 
 repositories {
     mavenLocal()
@@ -34,7 +34,7 @@ tasks {
         sinceBuild.set("212")
         untilBuild.set("221.*")
         changeNotes.set("""
-            init plugin version .<br>
+            增加无法支持场景的弹框提示<br>
             <em>most example in https://github.com/mrdear/SetterHelperExample </em>        """.trimIndent())
     }
 }
