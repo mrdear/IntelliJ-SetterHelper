@@ -9,7 +9,7 @@
 
 ## Installation
 
-<a href="https://plugins.jetbrains.com/embeddable/install/19612" target="_blank">
+<a href="https://plugins.jetbrains.com/plugin/19612-setterhepler" target="_blank">
     <img src="https://github.com/mrdear/SetterHelper/raw/master/doc/installation_button.png" height="52" alt="Get from Marketplace" title="Get from Marketplace">
 </a>
 
