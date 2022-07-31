@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.mrdear.setter"
-version = "0.1.2"
+version = "0.1.3"
 
 repositories {
     mavenLocal()
@@ -32,7 +32,7 @@ tasks {
     patchPluginXml {
         // 21代表年,后面的代表季度
         sinceBuild.set("212")
-        untilBuild.set("221.*")
+        untilBuild.set("224.*")
         changeNotes.set("""
             增加无法支持场景的弹框提示<br>
             <em>most example in https://github.com/mrdear/SetterHelperExample </em>        """.trimIndent())

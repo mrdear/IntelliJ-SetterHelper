@@ -7,7 +7,23 @@
 - lombok builder
 - this 
 
-## 参考
+## Installation
+
+<a href="https://plugins.jetbrains.com/embeddable/install/19612" target="_blank">
+    <img src="https://github.com/mrdear/SetterHelper/raw/master/doc/installation_button.png" height="52" alt="Get from Marketplace" title="Get from Marketplace">
+</a>
+
+- **Installing from the plugin repository within the IDE:**
+    - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search and find <b>"SetterHelper"</b></kbd> > <kbd>Install Plugin</kbd>.
+
+- **Installing manually:**
+    - Download the plugin package on [GitHub Releases][gh:releases] or in the [JetBrains Plugin Repository][plugin-versions].
+    - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd> >
+      Select the plugin package and install (no need to unzip)
+
+Restart the **IDE** after installation.
+
+## Example
 样例仓库：[https://github.com/mrdear/SetterHelperExample](https://github.com/mrdear/SetterHelperExample)
 
 ![image](https://github.com/mrdear/SetterHelperExample/raw/master/doc/preview.gif)
