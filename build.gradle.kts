@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.mrdear.setter"
-version = "0.1.3"
+version = "0.1.5"
 
 repositories {
     mavenLocal()
@@ -34,8 +34,10 @@ tasks {
         sinceBuild.set("212")
         untilBuild.set("224.*")
         changeNotes.set("""
-            增加无法支持场景的弹框提示<br>
-            <em>most example in https://github.com/mrdear/SetterHelperExample </em>        """.trimIndent())
+            0.1.15: add pluginIcon.svg and modify menu 'Setter Convert' to 'Model Convert'
+            <br/>
+            0.1.14: add message error pop, not error in IDE<br>
+            <em>most example in: <a href="https://github.com/mrdear/SetterHelperExample">https://github.com/mrdear/SetterHelperExample</a> </em>        """.trimIndent())
     }
 }
 

@@ -1,13 +1,15 @@
 <idea-plugin>
     <id>cn.mrdear.setter.SetterHelper</id>
-    <name>SetterHepler</name>
+    <name>SetterHelper</name>
     <vendor email="niudear@foxmail.com" url="https://mrdear.cn">屈定</vendor>
 
     <description><![CDATA[
-        The function of this plugin is to automatically map and copy the same fields of the two objects in Java and other languages, which can be compared to the role of mapstruct in Java. <br/>
-        this plugin use support get and set ,lombok builder and this.xxx = dto.getxxx(). <br/>
+        This plug-in can automatically complete a copy of one POJO to another POJO, In detail, this plugin is to automatically map and copy the same fields of the two objects in Java and other languages, which can be compared to the role of BeanPropertiesUtils in Java. <br/>
+        The completion function of this plug-in in java is support get and set method, lombok builder and this.xxx = dto.getxxx(). <br/>
+        the shortcut key is Generate (CTRL + N), and select 'Model Convert' menu.
         more example: <a href="https://github.com/mrdear/SetterHelperExample">https://github.com/mrdear/SetterHelperExample</a>
     ]]></description>
+
 
     <change-notes>Initial release of the plugin.</change-notes>
 
@@ -24,7 +26,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="SetterConvertGenerate" class="cn.mrdear.setter.action.SetterConvertGenerateActionGroup"
-                text="Setter Convert" description="POJO转换插件功能集">
+                text="Model Convert" description="POJO转换插件功能集">
             <add-to-group group-id="GenerateGroup" anchor="first"/>
         </action>
     </actions>
