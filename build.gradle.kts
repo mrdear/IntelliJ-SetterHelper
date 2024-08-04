@@ -1,11 +1,11 @@
 plugins {
-    id("org.jetbrains.intellij") version "1.3.1"
+    id("org.jetbrains.intellij") version "1.5.2"
     java
     idea
 }
 
 group = "cn.mrdear.setter"
-version = "0.1.5"
+version = "0.1.17"
 
 repositories {
     mavenLocal()
@@ -22,7 +22,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     // 修改为本地安装目录
-    version.set("2021.2")
+    version.set("2022.1")
     plugins.addAll("lombok","java","Kotlin")
     downloadSources.set(true)
 }
@@ -30,10 +30,14 @@ intellij {
 
 tasks {
     patchPluginXml {
-        // 21代表年,后面的代表季度
-        sinceBuild.set("212")
-        untilBuild.set("224.*")
+        // 22代表年,后面的代表季度
+        sinceBuild.set("221")
+        untilBuild.set("244.*")
         changeNotes.set("""
+            0.1.17: update intellij 24.*
+            <br/>
+            0.1.16: update intellij 23.*
+            <br/>
             0.1.15: add pluginIcon.svg and modify menu 'Setter Convert' to 'Model Convert'
             <br/>
             0.1.14: add message error pop, not error in IDE<br>
